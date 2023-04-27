@@ -230,7 +230,26 @@ app.get("/loggedin", (req, res) => {
     });
   });
 
+    const imageURL = [
+    "fluffy.gif",
+    "franky.jpg",
+    "yalu.jpg",
+    "Yay.gif"
+  ];
 
+  app.get("/image/:id", (req, res) => {
+  var meme = req.params.id;
+
+  if (meme == 1) {
+    res.send(`<img src='/${imageURL[0]}'>`);
+  } else if (meme == 2) {
+    res.send(`<img src='/${imageURL[1]}'>`);
+  } else if (meme == 3) {
+    res.send(`<img src='/${imageURL[2]}'>`);
+  } else {
+    res.send(`<img src='/${imageURL[3]}'>`);
+  }
+});
 
 
   app.get("/members", (req, res) => {
@@ -240,11 +259,11 @@ app.get("/loggedin", (req, res) => {
     }
   
     const name = req.session.name;
-    
+    const image = imageURL[Math.floor(Math.random() * imageURL.length)];
   
     const html = `
       <h1>Hello, ${name}!</h1>
-      
+      <img src="/${image}" alt="Random image">
       <br><br>
       <button onclick="window.location.href='/logout'">Log out</button>
     `;
@@ -257,8 +276,8 @@ app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
   res.status(404);
- 
-  res.send("<h1>Page not found - 404<h1>");
+  const img = `<img src="/404.gif" alt="404"><br>`;
+  res.send(img + "<h1>Page not found - 404<h1>");
 });
 
 app.listen(port, () => {

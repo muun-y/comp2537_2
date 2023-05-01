@@ -277,7 +277,7 @@ app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
   res.status(404);
-  const img = `<img src="/404.jpg" alt="404"><br>`;
+  const img = `<img src="/404.jpg" alt="404" width="300" height="300"><br>`;
   res.send(img + "<h1>Page not found - 404<h1>");
 });
 

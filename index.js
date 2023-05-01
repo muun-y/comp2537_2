@@ -232,8 +232,8 @@ app.get("/loggedin", (req, res) => {
 
     const imageURL = [
     "fluffy.gif",
-    "franky.jpg",
-    "Cookie.jpg",
+    "Yay.gif",
+    "Cookie.gif",
     "Cute.gif"
   ];
 

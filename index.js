@@ -32,7 +32,10 @@ var { database } = include("databaseConnection");
 
 const userCollection = database.db(mongodb_database).collection("users");
 
-app.use(express.urlencoded({ extended: false }));
+app.set('view engine', 'ejs'); 
+
+//middleware get a chance to run 
+app.use(express.urlencoded({ extended: false })); 
 
 var mongoStore = MongoStore.create({
   mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -41,6 +44,7 @@ var mongoStore = MongoStore.create({
   },
 });
 
+//parsing out the cookies 
 app.use(
   session({
     secret: node_session_secret,

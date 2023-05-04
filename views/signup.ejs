@@ -1,0 +1,12 @@
+<%- include("templates/header") %>
+<h1>Create User</h1>
+<form action='/submitUser' method='post'>
+<input name='email' type='email' placeholder='Email'>
+<br><br>
+<input name='name' type='text' placeholder='Name'>
+<br><br>
+<input name='password' type='password' placeholder='Password'>
+<br><br>
+<button>Submit</button>
+</form>
+<%- include("templates/footer") %>

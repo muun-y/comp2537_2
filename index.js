@@ -54,23 +54,47 @@ app.use(
   })
 );
 
+function isValidSession(req){
+  if(req.session.authenticated){
+    return true; 
+  }
+  return false; 
+}
+
+//middleware function
+function sessionValidation(req,res,next){
+  if(isValidSession(req)){
+    next(); 
+  }
+  else{
+    res.redirect('/login'); 
+  }
+}
+
+function isAdmin(req) {
+  if (req.session.user_type == 'admin') {
+      return true;
+  }
+  return false;
+}
+
+function adminAuthorization(req, res, next) {
+  if (!isAdmin(req)) {
+      res.status(403);
+      res.render("errorMessage", {error: "Not Authorized"});
+      return;
+  }
+  else {
+      next();
+  }
+}
+
 //Home page that checks for authentication status and offers login or sign-up
 app.get("/", (req, res) => {
   if (!req.session.authenticated) {
-    const buttons = `
-        <button onclick="window.location.href='/signup'">Sign up</button>
-        <br>
-        <button onclick="window.location.href='/login'">Log in</button>
-      `;
-    res.send(`<h1>Welcome to Munyoung's Website</h1>${buttons}`);
+   res.render("index"); 
   } else {
-    res.send(
-      `<h1>Hello, ${req.session.name}!</h1>
-      <br>
-      <a href="/members">Go to members area</a>
-      <br>
-      <a href="/logout">Logout</a>
-    `); 
+    res.redirect('/loggedin'); 
   }
 });
 
@@ -111,71 +135,38 @@ app.get("/nosql-injection", async (req, res) => {
   res.send(`<h1>Hello, ${name}!</h1>`);
 });
 
-//Sign up function
-app.get("/signup", (req, res) => {
-  var html = `
-      <h1>Create User</h1>
-      <form action='/submitUser' method='post'>
-      <input name='email' type='email' placeholder='Email'>
-      <br><br>
-      <input name='name' type='text' placeholder='Name'>
-      <br><br>
-      <input name='password' type='password' placeholder='Password'>
-      <br><br>
-      <button>Submit</button>
-      </form>
-      `;
-  res.send(html);
-});
-
-app.post("/submitUser", async (req, res) => {
-  var email = req.body.email;
-  var name = req.body.name;
-  var password = req.body.password;
-
-  const schema = Joi.object({
-    email: Joi.string().email().required(),
-    name: Joi.string().alphanum().max(20).required(),
-    password: Joi.string().max(20).required(),
-  });
-
-  const validationResult = schema.validate({ email, name, password });
-  if (validationResult.error != null) {
-    console.log(validationResult.error);
-    var errorMessage = validationResult.error.details[0].message;
-    res.send(
-      `Huston, we have a problem: ${errorMessage}. Please <a href="/signup">try again!</a>.`
-    );
-    return;
-  }
-
-  var hashedPassword = await bcrypt.hash(password, saltRounds);
-
-  await userCollection.insertOne({
-    name: name,
-    password: hashedPassword,
-    email: email,
-  });
-  console.log("Inserted user");
-
-  req.session.authenticated = true;
-  req.session.name = name;
-
-  res.redirect("/members");
+app.get('/createUser', (req,res) => {
+  res.render("createUser");
 });
 
 app.get("/login", (req, res) => {
-  var html = `
-      <h1>Log in</h1>
-      <form action='/loggingin' method='post'>
-      <input name='email' type='text' placeholder='Email'>
-      <br><br>
-      <input name='password' type='password' placeholder='Password'>
-      <br><br>
-      <button>Submit</button>
-      </form>
-      `;
-  res.send(html);
+  res.render("login");
+});
+
+app.post('/submitUser', async (req,res) => {
+  var username = req.body.username;
+  var password = req.body.password;
+
+const schema = Joi.object(
+  {
+    username: Joi.string().alphanum().max(20).required(),
+    password: Joi.string().max(20).required()
+  });
+
+const validationResult = schema.validate({username, password});
+if (validationResult.error != null) {
+   console.log(validationResult.error);
+   res.redirect("/createUser");
+   return;
+ }
+
+  var hashedPassword = await bcrypt.hash(password, saltRounds);
+
+await userCollection.insertOne({username: username, password: hashedPassword, user_type: "user"});
+console.log("Inserted user");
+
+  var html = "successfully created user";
+  res.render("submitUser", {html: html});
 });
 
 app.post("/loggingin", async (req, res) => {
@@ -213,78 +204,86 @@ app.post("/loggingin", async (req, res) => {
   } 
   else {
     res.send(`Invalid email/password combination. Please <a href="/login">try again</a>.`);
+    res.redirect('/login'); 
     return;
   }
 });
 
+app.use("/loggedin", sessionValidation); 
 app.get("/loggedin", (req, res) => {
-    if (!req.session.authenticated) {
-      res.redirect("/login");
-    } else {
-      res.redirect("/members");
-    }
+  if (!req.session.authenticated) {
+    res.redirect('/login');
+}
+res.render("loggedin");
   });
   
+//   app.get('/loggedin/info', (req,res) => {
+//     res.render("loggedin-info");
+// });
+
   app.get("/logout", (req, res) => {
-    req.session.destroy((err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.redirect("/");
-      }
-    });
-  });
-
-    const imageURL = [
-    "Cookie.gif",
-    "Cute.gif",
-    "fluffy.gif",
-    "Yay.gif"
-  ];
-
-  app.get("/image/:id", (req, res) => {
-  var meme = req.params.id;
-
-  if (meme == 1) {
-    res.send(`<img src='/${imageURL[0]}'>`);
-  } else if (meme == 2) {
-    res.send(`<img src='/${imageURL[1]}'>`);
-  } else if (meme == 3) {
-    res.send(`<img src='/${imageURL[2]}'>`);
-  } else {
-    res.send(`<img src='/${imageURL[3]}'>`);
-  }
+    req.session.destroy();
+    res.render("loggedout");
 });
 
+app.get('/cat/:id', (req,res) => {
+  var cat = req.params.id; 
+  res.render("cats", {cat: cat}); 
+}); 
 
-  app.get("/members", (req, res) => {
-    if (!req.session.name) {
-      res.redirect("/login");
-      return;
-    }
+//     const imageURL = [
+//     "Cookie.gif",
+//     "Cute.gif",
+//     "fluffy.gif",
+//     "Yay.gif"
+//   ];
+
+//   app.get("/image/:id", (req, res) => {
+//   var meme = req.params.id;
+
+//   if (meme == 1) {
+//     res.send(`<img src='/${imageURL[0]}'>`);
+//   } else if (meme == 2) {
+//     res.send(`<img src='/${imageURL[1]}'>`);
+//   } else if (meme == 3) {
+//     res.send(`<img src='/${imageURL[2]}'>`);
+//   } else {
+//     res.send(`<img src='/${imageURL[3]}'>`);
+//   }
+// });
+
+
+//   app.get("/members", (req, res) => {
+//     if (!req.session.name) {
+//       res.redirect("/login");
+//       return;
+//     }
   
-    const name = req.session.name;
-    const image = imageURL[Math.floor(Math.random() * imageURL.length)];
+//     const name = req.session.name;
+//     const image = imageURL[Math.floor(Math.random() * imageURL.length)];
   
-    const html = `
-      <h1>Hello, ${name}!</h1>
-      <img src="/${image}" alt="Random image">
-      <br><br>
-      <button onclick="window.location.href='/logout'">Log out</button>
-    `;
-    res.send(html);
-  });
+//     const html = `
+//       <h1>Hello, ${name}!</h1>
+//       <img src="/${image}" alt="Random image">
+//       <br><br>
+//       <button onclick="window.location.href='/logout'">Log out</button>
+//     `;
+//     res.send(html);
+//   });
 
-
+  app.get('/admin', sessionValidation, adminAuthorization, async (req,res) => {
+    const result = await userCollection.find().project({username: 1, _id: 1}).toArray();
+ 
+    res.render("admin", {users: result});
+});
 
 app.use(express.static(__dirname + "/public"));
 
 app.get("*", (req, res) => {
   res.status(404);
-  const img = `<img src="/404.jpg" alt="404" width="300" height="300"><br>`;
-  res.send(img + "<h1>Page not found - 404<h1>");
+  res.render("404"); 
 });
 
 app.listen(port, () => {
-  console.log("Assignment 1 listening on port " + port);
+  console.log("Assignment 2 listening on port " + port);
 });

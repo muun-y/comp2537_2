@@ -1,8 +1,16 @@
 <%- include("templates/header") %>
-
-<h1>Welcome to Munyoung's Website</h1>
-<button onclick="window.location.href='/createUser'">Sign up</button>
-<br>
-<button onclick="window.location.href='/login'">Log in</button>
-
+<body>
+  <div class="container-fluid">
+    <h1 style="text-align: center;">Hello, <%= username %>!</h1>
+  </div>
+  <div class="container-fluid">
+    <img src="/hi_cat.gif" class="img-responsive center-block" style="padding-top: 30px; padding-bottom: 50px;">
+  </div>
+  <div class="container-fluid">
+    <div class="text-center">
+      <a class="btn btn-primary btn-lg" href="/members" role="button" style="margin-bottom: 10px;">Members area</a>
+      <a class="btn btn-primary btn-lg" href="/logout" role="button" style="margin-bottom: 10px;">Log out</a>
+    </div>
+  </div>
+</body>
 <%- include("templates/footer") %>

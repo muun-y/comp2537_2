@@ -1,12 +1,23 @@
 <%- include("templates/header") %>
-<h1>Create User</h1>
-<form action='/submitUser' method='post'>
-<input name='email' type='email' placeholder='Email'>
-<br><br>
-<input name='name' type='text' placeholder='Name'>
-<br><br>
-<input name='password' type='password' placeholder='Password'>
-<br><br>
-<button>Submit</button>
-</form>
-<%- include("templates/footer") %>
+    <main class="form-signin w-25 m-auto">
+        <form action="/submitUser" method="post">
+            <h1 class="display-5 fw-bold text-body-emphasis">Create an account</h1>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="floatingInput" name="username"/>
+                <label for="floatingInput">Name</label>
+            </div>
+            <div class="form-floating">
+                <input type="email" name="email" class="form-control" id="floatingEmail"
+                    />
+                <label for="floatingEmail">Email</label>
+            </div>
+            <div class="form-floating">
+                <input type="password"class="form-control" id="floatingPassword" name="password">
+                <label for="floatingPassword">Password</label>
+            </div>
+            <button class="btn btn-success rounded-pill px-3" style="margin-top: 32px" type="submit">
+                Submit
+            </button>
+        </form>
+    </main>
+    <%- include("templates/footer") %>

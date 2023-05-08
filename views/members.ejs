@@ -1,0 +1,46 @@
+<%- include("templates/header") %>
+<head>
+    <style>
+      .bordered-column {
+        border-style: double;
+        border-width: 1px;
+        padding: 15px;
+      }
+      .uniform-image {
+        width: 250px;
+        height: 250px;
+        object-fit: cover;
+        margin: auto;
+      }
+    </style>
+  </head>
+    <div class="container-fluid">
+        <h1>Welcome to the Member's Area, <%= username %>!</h1>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 bordered-column">
+                <img src="Cookie.gif" class="img-responsive uniform-image" alt="Cat meme" />
+            </div>
+            <div class="col-sm-4 bordered-column">
+                <img src="Cute.gif" class="img-responsive uniform-image" alt="P Cat" />
+            </div>
+            <div class="col-sm-4 bordered-column">
+                <img src="fluffy.gif" class="img-responsive uniform-image" alt="Yelling cat" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 bordered-column">
+                <img src="Yay.gif" class="img-responsive uniform-image" alt="muscle cat" />
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+    <div class="container-fluid" style="padding-top: 50px; padding-bottom: 30px;">
+        <a class="btn btn-success rounded-pill px-3" href="/" role="button" style="margin: auto; padding: 10px; font-size: 20px">Home</a>
+        <a class="btn btn-success rounded-pill px-3" href="/logout" role="button" style="margin: auto; padding: 10px; font-size: 20px">Log
+            out</a>
+    </div>
+    <%- include("templates/footer") %>

@@ -1,8 +1,58 @@
 <%- include("templates/header") %>
-<main>
-  <h1>Users</h1>
-  <br />
-  <% let i=0; %> <% for(i=0; i < name.length; i++) { %> <%-
-  include('templates/user', {user: name[i]},) %> <% } %>
-</main>
+<head>
+  <style>
+    body {
+      font-size: 18px;
+    }
+    
+    .full-width-container {
+      width: 80%;
+    }
+    .table-centered {
+      text-align: center;
+    }
+    .table-centered th,
+    .table-centered td {
+      text-align: center;
+      vertical-align: middle;
+    }
+    .table-centered thead tr {
+      border-bottom: 4px green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <h1 style="text-align: center">Welcome, <%= username %>!</h1>
+  </div>
+  <div class="container-fluid">
+    <h2 style="text-align: center; padding-bottom: 40px;">Admin Dashboard</h2>
+  </div>
+  <div class="container-fluid full-width-container">
+    <table class="table table-hover table-centered">
+      <thead>
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">User Type</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+        <tr>
+          <td><%= user.username %></td>
+          <td><%= user.user_type %></td>
+          <td>
+            <% if (user.user_type !== 'admin') { %>
+            <button type="button" class="btn btn-warning" onclick="window.location.href='/promote/<%= user.username %>'">Promote</button>
+            <% } else { %>
+            <button type="button" class="btn btn-warning" onclick="window.location.href='/demote/<%= user.username %>'">Demote</button>
+            <% } %>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</body>
 <%- include("templates/footer") %>

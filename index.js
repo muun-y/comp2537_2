@@ -70,12 +70,8 @@ function isAdmin(req) {
 
 function adminAuthorization(req, res, next) {
   if (!isAdmin(req)) {
-    var isAuthenticated = req.session.authenticated || false;
     res.status(403);
-    res.render("403", {
-      authenticated: isAuthenticated,
-      error: "Not Authorized - 403",
-    });
+    res.render("403", { error: "This clearance is above your paygrade." });
     return;
   } else {
     next();

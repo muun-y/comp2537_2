@@ -1,15 +1,15 @@
 <%- include("templates/header") %>
 <body>
   <div class="container-fluid">
-    <h1 style="text-align: center;">Hello, <%= username %>!</h1>
+    <h1 class="display-5 fw-bold text-body-emphasis" style="text-align: center;">Welcome, <%= username %>!</h1>
   </div>
   <div class="container-fluid">
-    <img src="/hi_cat.gif" class="img-responsive center-block" style="padding-top: 30px; padding-bottom: 50px;">
+    <img src="/cat.jpg" class="img-responsive center-block" style="padding-top: 30px; padding-bottom: 50px; width: 10%; height: 30%;">
   </div>
   <div class="container-fluid">
     <div class="text-center">
-      <a class="btn btn-primary btn-lg" href="/members" role="button" style="margin-bottom: 10px;">Members area</a>
-      <a class="btn btn-primary btn-lg" href="/logout" role="button" style="margin-bottom: 10px;">Log out</a>
+      <a class="btn btn-success rounded-pill px-3" href="/members" role="button" style="margin-bottom: 10px;">Members area</a>
+      <a class="btn btn-success rounded-pill px-3" href="/logout" role="button" style="margin-bottom: 10px;">Log out</a>
     </div>
   </div>
 </body>
